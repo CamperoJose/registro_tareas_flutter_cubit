@@ -7,6 +7,26 @@ import 'package:registro_tareas_flutter_cubit/clases/Note.dart';
 
 void main() => runApp(MyApp());
 
+MyApp myApp = MyApp();
+
+MaterialColor myPink = const MaterialColor(
+  0xFF880E4F,
+  <int, Color>{
+    50: Color(0xFFFCE4EC),
+    100: Color(0xFFF8BBD0),
+    200: Color(0xFFF48FB1),
+    300: Color(0xFFF06292),
+    400: Color(0xFFEC407A),
+    500: Color(0xFFE91E63),
+    600: Color(0xFFD81B60),
+    700: Color(0xFFC2185B),
+    800: Color(0xFFAD1457),
+    900: Color(0xFF880E4F),
+  },
+);
+
+
+
 class MyApp extends StatelessWidget {
 
   @override
@@ -21,12 +41,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => LoginView(),
-        '/home1': (context) => HomeView(),
-      },
+      home: LoginView(),
     );
   }
 }

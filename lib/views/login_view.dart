@@ -3,6 +3,8 @@ import 'package:registro_tareas_flutter_cubit/components/text_field_design1.dart
 import 'package:registro_tareas_flutter_cubit/components/button_design1.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'home1_view.dart';
+
 class LoginView extends StatefulWidget {
   @override
   _LoginViewState createState() => _LoginViewState();
@@ -23,7 +25,7 @@ class _LoginViewState extends State<LoginView> {
     );
     return;
   }
-  Navigator.pushNamed(context, '/home1');
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeView()));
 }
 
 
