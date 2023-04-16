@@ -1,9 +1,5 @@
-import 'package:registro_tareas_flutter_cubit/views/add_tag_view.dart';
 import 'package:flutter/material.dart';
 import 'views/login_view.dart';
-import 'views/home1_view.dart';
-import 'views/add_note_view.dart';
-import 'package:registro_tareas_flutter_cubit/clases/Note.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,11 +20,7 @@ MaterialColor myPink = const MaterialColor(
     900: Color(0xFF880E4F),
   },
 );
-
-
-
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
