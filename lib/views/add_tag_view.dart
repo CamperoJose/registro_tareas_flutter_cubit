@@ -1,52 +1,36 @@
 import 'package:registro_tareas_flutter_cubit/views/add_note_view.dart';
 import 'package:flutter/material.dart';
+import '../bl/tags_cubit.dart';
 import '../clases/Tag.dart';
 import '../clases/TagList.dart';
 import '../components/appbar_design1.dart';
 import '../components/tag_item.dart';
 
-class AddTagView extends StatefulWidget {
-  @override
-  _AddTagViewState createState() => _AddTagViewState();
-}
+class AddTagView extends StatelessWidget {
+  final TagsCubit cubitTags;
 
-class _AddTagViewState extends State<AddTagView> {
+  AddTagView(this.cubitTags);
+
   List<Tag> optionsTags = listedTags.getVisbleTags();
 
   bool _showNewTagForm = false;
   final _newTagNameController = TextEditingController();
 
-  void _onBack() {
-    Navigator.pushNamed(context, '/AddNoteView');
-  }
+  void _onBack() {}
 
-  void _showForm() {
-    setState(() {
-      _showNewTagForm = true;
-    });
-  }
+  void _showForm() {}
 
-  void _hideForm() {
-    setState(() {
-      _showNewTagForm = false;
-    });
-  }
+  void _hideForm() {}
 
   void _saveNewTag() {
     final newTagName = _newTagNameController.text.trim();
     if (newTagName.isNotEmpty) {
       final newTag = Tag(newTagName);
       optionsTags.add(newTag);
-      setState(() {
-        _newTagNameController.clear();
-        _showNewTagForm = false;
-      });
     }
   }
 
-  void updateListView() {
-    setState(() {});
-  }
+  void updateListView() {}
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +122,7 @@ class _AddTagViewState extends State<AddTagView> {
               child: ElevatedButton(
                 onPressed: () {
                   listedTags.setNewTags(optionsTags);
+                  cubitTags.listedTag();
                   //listedTags = optionsTags;
                   Navigator.pop(context);
                 },
