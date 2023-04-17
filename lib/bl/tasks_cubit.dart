@@ -6,7 +6,9 @@ import '../clases/PendingTasks.dart';
 class PendingTasksCubit extends Cubit<PendingTasks> {
   PendingTasksCubit() : super(PendingTasks([]));
 
-  void listedTasks() => emit(PendingTasksList);
+  void listedTasks(){
+    emit(PendingTasksList = PendingTasksList.copyWith(tasks: PendingTasksList.notes1));
+  }
 
   bool addNewNote(Note miNotaA) {
     try {

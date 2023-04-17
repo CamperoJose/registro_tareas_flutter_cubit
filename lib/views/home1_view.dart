@@ -15,15 +15,15 @@ import '../clases/Tag.dart';
 import '../clases/TagList.dart';
 import '../components/todo_item.dart';
 
+
 class HomeView extends StatelessWidget {
-  
+  final cubitTasks = PendingTasksCubit();
+
   @override
   Widget build(BuildContext context) {
     void _onLogout() {
       Navigator.pushNamed(context, '/');
     }
-
-    PendingTasksCubit cubitTasks = PendingTasksCubit();
 
     return Scaffold(
       backgroundColor: Colors.indigo[100],
@@ -48,7 +48,8 @@ class HomeView extends StatelessWidget {
               ),
             ),
             BlocBuilder<PendingTasksCubit, PendingTasks>(
-              builder: (cubitTasks, state) {
+              builder: (PendingTasksCubit, cubitTasks) {
+                print("Reconstruyendo");
                 return Expanded(
                   child: PendingTasksList.getSize() > 0
                       ? ListView.builder(
@@ -64,8 +65,11 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                 );
-              },
+              }, 
             ),
+            ElevatedButton(onPressed: (){
+              BlocProvider.of<PendingTasksCubit>(context).listedTasks();
+            }, child: Text("Actualizar"))
           ],
         ),
       ),
@@ -73,15 +77,9 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.indigo[700],
         hoverColor: Colors.indigo[500],
         onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddNoteView(cubitTasks)),
-                );
-
-                if (result == true) {
-                  BlocProvider.of<PendingTasksCubit>(context).listedTasks();
-                }
-                
+                final result = await Navigator.push(context,MaterialPageRoute(builder: (context) => AddNoteView(cubitTasks)));
+                print(result);
+                BlocProvider.of<PendingTasksCubit>(context).listedTasks();
               },
         tooltip: 'Agregar nueva tarea',
         child: const Icon(

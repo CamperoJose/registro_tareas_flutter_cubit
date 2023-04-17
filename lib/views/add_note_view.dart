@@ -142,7 +142,7 @@ class AddNoteView extends StatelessWidget {
                       onPressed: () {
                         Note miNotaA = Note(_noteName.text, valueDate, _noteTag);
                         cubitTasks.addNewNote(miNotaA);
-                        Navigator.pop(context);
+                        Navigator.pop(context, true);
                       },
                       child: Text('Guardar'),
                       style: ElevatedButton.styleFrom(
