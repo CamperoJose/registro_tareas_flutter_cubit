@@ -8,6 +8,7 @@ import 'package:registro_tareas_flutter_cubit/clases/Note.dart';
 //import 'package:registro_tareas_flutter_cubit/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:registro_tareas_flutter_cubit/views/home1_view.dart';
+import '../bl/tags_cubit.dart';
 import '../bl/tasks_cubit.dart';
 import '../clases/PendingTasks.dart';
 import '../clases/TagList.dart';
@@ -20,6 +21,7 @@ class AddNoteView extends StatelessWidget {
 
   Widget build(BuildContext context) {
     List<Tag> optionsTags = listedTags.getVisbleTags();
+    final TagsCubit cubitTags = TagsCubit();
 
     final _noteName = TextEditingController();
     late Tag _noteTag;
@@ -83,11 +85,9 @@ class AddNoteView extends StatelessWidget {
                               pickedTime.minute,
                             );
 
-            
-                              _noteDate.text = DateFormat('yyyy-MM-dd HH:mm')
-                                  .format(pickedDateTime);
-                              valueDate = pickedDateTime;
-                      
+                            _noteDate.text = DateFormat('yyyy-MM-dd HH:mm')
+                                .format(pickedDateTime);
+                            valueDate = pickedDateTime;
                           }
                         }
                       },
@@ -97,41 +97,59 @@ class AddNoteView extends StatelessWidget {
 
                     Row(
                       children: [
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            onTap: () {
-                      
-                                optionsTags = listedTags.getVisbleTags();
-                      
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.tag_rounded),
-                              labelText: 'Etiqueta',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            items: optionsTags.map((name) {
-                              return DropdownMenuItem(
-                                child: Text(name.tagName),
-                                value: name,
+                        BlocProvider(
+                          create: (context) => cubitTags,
+                          child: BlocConsumer<TagsCubit, ListedTags>(
+                            builder: (context, state) {
+                              return Expanded(
+                                child: DropdownButtonFormField(
+                                  onTap: () {
+                                    optionsTags = listedTags.getVisbleTags();
+                                  },
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.tag_rounded),
+                                    labelText: 'Etiqueta',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  items: optionsTags.map((name) {
+                                    return DropdownMenuItem(
+                                      child: Text(name.tagName),
+                                      value: name,
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    _noteTag = value!;
+                                  },
+                                ),
                               );
-                            }).toList(),
-                            onChanged: (value) {
-                              _noteTag = value!;
+                            },
+                            listener: (context, state) {
+                              print("llega al listener");
+                              BlocProvider.of<TagsCubit>(context).listedTag();
+                            },
+                            buildWhen: (previous, current) {
+                              print("old: $previous");
+                              print("new: $current");
+                              return true;
+                            },
+                            listenWhen: (previous, current) {
+                              print("old: $previous");
+                              print("new: $current");
+                              return true;
                             },
                           ),
                         ),
                         SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddTagView()),
-                            );
-                              optionsTags = listedTags.getVisbleTags();
+                            final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => BlocProvider(
+                              create: (context) => cubitTags,
+                              child: AddTagView(cubitTags),
+                            ),));
 
+                            optionsTags = listedTags.getVisbleTags();
                           },
                           child: Icon(Icons.edit),
                         ),
@@ -140,7 +158,8 @@ class AddNoteView extends StatelessWidget {
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        Note miNotaA = Note(_noteName.text, valueDate, _noteTag);
+                        Note miNotaA =
+                            Note(_noteName.text, valueDate, _noteTag);
                         cubitTasks.addNewNote(miNotaA);
                         Navigator.pop(context, true);
                       },
