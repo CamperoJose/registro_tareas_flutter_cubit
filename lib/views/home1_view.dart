@@ -77,10 +77,13 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.indigo[700],
         hoverColor: Colors.indigo[500],
         onPressed: () async {
-                final result = await Navigator.push(context,MaterialPageRoute(builder: (context) => AddNoteView(cubitTasks)));
-                print(result);
-                BlocProvider.of<PendingTasksCubit>(context).listedTasks();
-              },
+            final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => BlocProvider(
+              create: (context) => cubitTasks,
+              child: AddNoteView(cubitTasks),
+            ),));
+            print(result);
+            BlocProvider.of<PendingTasksCubit>(context).listedTasks();
+          },
         tooltip: 'Agregar nueva tarea',
         child: const Icon(
           Icons.add_rounded,
