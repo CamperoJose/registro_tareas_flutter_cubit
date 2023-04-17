@@ -17,13 +17,14 @@ class TagsCubit extends Cubit<ListedTags> {
     emit(listedTags);
   }
 
+
   void setNewTags(List<Tag> tags1) {
     listedTags.setNewTags(tags1);
     emit(listedTags);
   }
 
   void deleteTag(int index) {
-    listedTags.getTagByIndex(index).visible = false;
+    listedTags.removeAt(index);
     emit(listedTags);
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/views/add_note_view.dart';
 import 'package:flutter/material.dart';
 import '../bl/tags_cubit.dart';
@@ -11,26 +12,11 @@ class AddTagView extends StatelessWidget {
 
   AddTagView(this.cubitTags);
 
-  List<Tag> optionsTags = listedTags.getVisbleTags();
-
+  final TagsCubit cubitTagsList = TagsCubit();
   bool _showNewTagForm = false;
   final _newTagNameController = TextEditingController();
 
-  void _onBack() {}
 
-  void _showForm() {}
-
-  void _hideForm() {}
-
-  void _saveNewTag() {
-    final newTagName = _newTagNameController.text.trim();
-    if (newTagName.isNotEmpty) {
-      final newTag = Tag(newTagName);
-      optionsTags.add(newTag);
-    }
-  }
-
-  void updateListView() {}
 
   @override
   Widget build(BuildContext context) {
@@ -42,33 +28,55 @@ class AddTagView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MyAppBar(title: "Editar Etiquetas"),
-            Expanded(
-              child: ListView.builder(
-                itemCount: optionsTags.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                      child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            BlocProvider(
+              create: (context) => cubitTagsList,
+              child: BlocConsumer<TagsCubit, ListedTags>(
+                builder: (context, state) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: listedTags.getSize(),
+                      itemBuilder: (context, index) {
+                        return Container(
+                            child: Row(
                           children: [
-                            TagItem(optionsTags[index]),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          //listedTags.getTag(index).setDelete();
-                          optionsTags.removeAt(index);
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TagItem(listedTags.tags[index]),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                //listedTags.getTag(index).setDelete();
 
-                          updateListView();
-                        },
-                        icon: Icon(Icons.delete),
-                        color: Colors.red,
-                      ),
-                    ],
-                  ));
+                                
+                                listedTags.removeAt(index);
+
+                              },
+                              icon: Icon(Icons.delete),
+                              color: Colors.red,
+                            ),
+                          ],
+                        ));
+                      },
+                    ),
+                  );
+                },
+                listener: (context, state) {
+                  print("llega al listener");
+                  BlocProvider.of<TagsCubit>(context).listedTag();
+                },
+                buildWhen: (previous, current) {
+                  print("old: $previous");
+                  print("new: $current");
+                  return true;
+                },
+                listenWhen: (previous, current) {
+                  print("old: $previous");
+                  print("new: $current");
+                  return true;
                 },
               ),
             ),
@@ -89,12 +97,12 @@ class AddTagView extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: _saveNewTag,
+                      onPressed: (){},
                       child: Text('Guardar'),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: _hideForm,
+                      onPressed: (){},
                       child: Text('Cerrar'),
                     ),
                   ],
@@ -105,7 +113,7 @@ class AddTagView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ElevatedButton(
-                  onPressed: _showForm,
+                  onPressed: (){},
                   child: Text('Nueva Etiqueta'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
@@ -121,7 +129,7 @@ class AddTagView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  listedTags.setNewTags(optionsTags);
+                  
                   cubitTags.listedTag();
                   //listedTags = optionsTags;
                   Navigator.pop(context);

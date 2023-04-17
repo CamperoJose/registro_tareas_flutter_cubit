@@ -8,6 +8,14 @@ class ListedTags {
     tags.add(tag);
   }
 
+  removeAt(int index) {
+    tags.removeAt(index);
+  }
+
+  getSize(){
+    return tags.length;
+  }
+
 
   Tag getTag(int index) {
     List<Tag> visibleTags = tags.where((tag) => tag.visible == true).toList();
@@ -23,9 +31,7 @@ class ListedTags {
     tags = tags1;
   }
 
-  getSize() {
-    return tags.length;
-  }
+
 
   getTagByIndex(int index) {
     return tags[index];

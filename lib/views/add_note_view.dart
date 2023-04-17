@@ -141,6 +141,8 @@ class AddNoteView extends StatelessWidget {
                             },
                           ),
                         ),
+
+                        
                         SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () async {
