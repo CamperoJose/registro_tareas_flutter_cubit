@@ -22,6 +22,20 @@ class ListedTags {
   setNewTags(List<Tag> tags1) {
     tags = tags1;
   }
+
+  getSize() {
+    return tags.length;
+  }
+
+  getTagByIndex(int index) {
+    return tags[index];
+  }
+
+  copyWith({required List<Tag> tags}){
+    return ListedTags(tags);
+  }
+
+
 }
 
 List<Tag> tags1 = [Tag("Trabajo"), Tag("Universidad")];
