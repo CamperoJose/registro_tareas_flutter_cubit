@@ -5,6 +5,8 @@ class PendingTasks {
   List<Note> notes1 = [];
   PendingTasks(this.notes1);
 
+  get tasks => null;
+
   addNote(NoteA) {
     notes1.add(NoteA);
   }
@@ -15,6 +17,10 @@ class PendingTasks {
 
   getNote(int pos) {
     return notes1[pos];
+  }
+
+  copyWith({required List<Note> tasks}) {
+    return PendingTasks(tasks);
   }
 
 }

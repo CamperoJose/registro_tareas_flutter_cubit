@@ -1,32 +1,30 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/clases/Tag.dart';
 import 'package:registro_tareas_flutter_cubit/views/add_tag_view.dart';
-import 'package:registro_tareas_flutter_cubit/views/login_view.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:registro_tareas_flutter_cubit/clases/Note.dart';
-//import 'package:registro_tareas_flutter_cubit/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:registro_tareas_flutter_cubit/views/home1_view.dart';
+import '../bl/tags_cubit.dart';
+import '../bl/tasks_cubit.dart';
 import '../clases/PendingTasks.dart';
 import '../clases/TagList.dart';
 import '../components/appbar_design1.dart';
 
-class AddNoteView extends StatefulWidget {
-  @override
-  _AddNoteViewState createState() => _AddNoteViewState();
-}
+class AddNoteView extends StatelessWidget {
+  final PendingTasksCubit cubitTasks;
 
-class _AddNoteViewState extends State<AddNoteView> {
-  List<Tag> optionsTags = listedTags.getVisbleTags();
+  AddNoteView(this.cubitTasks);
 
-  final _noteName = TextEditingController();
-  late Tag _noteTag;
-  TextEditingController _noteDate = TextEditingController();
-  late DateTime valueDate;
-
-  @override
   Widget build(BuildContext context) {
-    const double kVerticalPadding = 20.0;
+    final TagsCubit cubitTags = TagsCubit();
+    ListedTags listedTags = cubitTags.state;
+    List<Tag> optionsTags = listedTags.getVisbleTags();
+
+    final _noteName = TextEditingController();
+    late Tag _noteTag;
+    TextEditingController _noteDate = TextEditingController();
+    late DateTime valueDate;
     return Scaffold(
       backgroundColor: Colors.indigo[100],
       body: SafeArea(
@@ -49,9 +47,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: kVerticalPadding),
-
-                    //cambios input fecha:
+                    SizedBox(height: 20),
 
                     TextField(
                       controller: _noteDate,
@@ -85,85 +81,87 @@ class _AddNoteViewState extends State<AddNoteView> {
                               pickedTime.minute,
                             );
 
-                            setState(() {
-                              _noteDate.text = DateFormat('yyyy-MM-dd HH:mm')
-                                  .format(pickedDateTime);
-                              valueDate = pickedDateTime;
-                            });
+                            _noteDate.text = DateFormat('yyyy-MM-dd HH:mm')
+                                .format(pickedDateTime);
+                            valueDate = pickedDateTime;
                           }
                         }
                       },
                     ),
 
-                    SizedBox(height: kVerticalPadding),
+                    SizedBox(height: 20),
 
                     Row(
                       children: [
-                        Expanded(
-                          child: DropdownButtonFormField(
-                            onTap: () {
-                              setState(() {
-                                optionsTags = listedTags.getVisbleTags();
-                              });
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.tag_rounded),
-                              labelText: 'Etiqueta',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            items: optionsTags.map((name) {
-                              return DropdownMenuItem(
-                                child: Text(name.tagName),
-                                value: name,
+                        BlocProvider(
+                          create: (context) => cubitTags,
+                          child: BlocConsumer<TagsCubit, ListedTags>(
+                            builder: (context, state) {
+                              optionsTags = state.getVisbleTags();
+                              return Expanded(
+                                child: DropdownButtonFormField(
+                                  onTap: () {
+                                    optionsTags = state.getVisbleTags();
+                                  },
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(Icons.tag_rounded),
+                                    labelText: 'Etiqueta',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  items: optionsTags.map((name) {
+                                    return DropdownMenuItem(
+                                      child: Text(name.tagName),
+                                      value: name,
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    _noteTag = value!;
+                                  },
+                                ),
                               );
-                            }).toList(),
-                            onChanged: (value) {
-                              _noteTag = value!;
+                            },
+                            listener: (context, state) {
+                              print("llega al listener 1");
+                              cubitTags.listedTag();
+                            },
+                            buildWhen: (previous, current) {
+                              print("old: $previous");
+                              print("new: $current");
+                              return true;
+                            },
+                            listenWhen: (previous, current) {
+                              print("old: $previous");
+                              print("new: $current");
+                              return true;
                             },
                           ),
                         ),
                         SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AddTagView()),
-                            );
-                            //if (result != null && result == 'added') {
-                              setState(() {
-                                optionsTags = listedTags.getVisbleTags();
-                              });
-                            //}
+                            final result = await Navigator.of(context)
+                                .push(MaterialPageRoute(
+                              builder: (context) => BlocProvider(
+                                create: (context) => cubitTags,
+                                child: AddTagView(cubitTags),
+                              ),
+                            ));
+                            cubitTags.emit(result);
+                            optionsTags = cubitTags.state.getVisbleTags();
                           },
                           child: Icon(Icons.edit),
                         ),
                       ],
                     ),
-
-                    //COMBO BOX INCIO:
-
-                    //COMBO BOX FIN:
-
-                    SizedBox(height: kVerticalPadding),
+                    SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         Note miNotaA =
                             Note(_noteName.text, valueDate, _noteTag);
-                        PendingTasksList.addNote(miNotaA);
-
-                        Navigator.pushNamed(context, '/home1');
-
-                        Fluttertoast.showToast(
-                          msg: 'Tarea guardada',
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 2,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                        cubitTasks.addNewNote(miNotaA);
+                        Navigator.pop(context, true);
                       },
                       child: Text('Guardar'),
                       style: ElevatedButton.styleFrom(
@@ -175,7 +173,7 @@ class _AddNoteViewState extends State<AddNoteView> {
                       ),
                     ),
 
-                    SizedBox(height: kVerticalPadding),
+                    SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);

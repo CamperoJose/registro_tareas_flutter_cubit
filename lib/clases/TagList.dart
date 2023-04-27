@@ -8,6 +8,14 @@ class ListedTags {
     tags.add(tag);
   }
 
+  removeAt(int index) {
+    tags.removeAt(index);
+  }
+
+  getSize(){
+    return tags.length;
+  }
+
 
   Tag getTag(int index) {
     List<Tag> visibleTags = tags.where((tag) => tag.visible == true).toList();
@@ -22,6 +30,18 @@ class ListedTags {
   setNewTags(List<Tag> tags1) {
     tags = tags1;
   }
+
+
+
+  getTagByIndex(int index) {
+    return tags[index];
+  }
+
+  copyWith({required List<Tag> tags}){
+    return ListedTags(tags);
+  }
+
+
 }
 
 List<Tag> tags1 = [Tag("Trabajo"), Tag("Universidad")];
