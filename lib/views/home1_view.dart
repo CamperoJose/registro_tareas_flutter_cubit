@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keychain/flutter_keychain.dart';
 import 'package:registro_tareas_flutter_cubit/clases/PendingTasks.dart';
 import 'package:registro_tareas_flutter_cubit/views/add_note_view.dart';
 import '../bl/tasks_cubit.dart';
 import '../components/todo_item.dart';
-
 
 class HomeView extends StatelessWidget {
   final cubitTasks = PendingTasksCubit();
@@ -38,7 +38,6 @@ class HomeView extends StatelessWidget {
                 onPressed: _onLogout,
                 iconSize: 30,
               ),
-
             ),
             BlocBuilder<PendingTasksCubit, PendingTasks>(
               builder: (PendingTasksCubit, cubitTasks) {
@@ -57,7 +56,7 @@ class HomeView extends StatelessWidget {
                           ),
                         ),
                 );
-              }, 
+              },
             ),
           ],
         ),
@@ -66,13 +65,18 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.indigo[700],
         hoverColor: Colors.indigo[500],
         onPressed: () async {
-            final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => BlocProvider(
+          var value = await FlutterKeychain.get(key: "AuthToken");
+          print("AuthToken recuperado exitosamente: $value");
+
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BlocProvider(
               create: (context) => cubitTasks,
               child: AddNoteView(cubitTasks),
-            ),));
-            print(result);
-            BlocProvider.of<PendingTasksCubit>(context).listedTasks();
-          },
+            ),
+          ));
+          print(result);
+          BlocProvider.of<PendingTasksCubit>(context).listedTasks();
+        },
         tooltip: 'Agregar nueva tarea',
         child: const Icon(
           Icons.add_rounded,

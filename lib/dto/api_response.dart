@@ -1,3 +1,4 @@
+
 import 'auth_response.dart';
 
 class ApiResponse {
@@ -12,7 +13,6 @@ class ApiResponse {
   });
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) {
-    print(json['response']);
     return ApiResponse(
       code: json['code'],
       response: AuthResponse.fromJson(json['response']),
