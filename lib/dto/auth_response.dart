@@ -11,6 +11,14 @@ class AuthResponse {
     );
   }
 
+  getAuthToken(){
+    return authToken;
+  }
+
+  getRefreshToken(){
+    return refreshToken;
+  }
+
   Map<String, dynamic> toJson() {
   final Map<String, dynamic> data = new Map<String, dynamic>();
   data['authToken'] = authToken;
