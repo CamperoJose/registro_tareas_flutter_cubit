@@ -16,9 +16,9 @@ class LoginState extends Equatable {
   // Define un constructor constante que acepta valores opcionales para
   // 'email', 'password' y 'status'.
   const LoginState({
-    this.email = '',
-    this.password = '',
-    this.status = LoginStatus.loading,
+    this.email,
+    this.password,
+    this.status,
   });
 
   // Define un método llamado 'copyWith' que devuelve una nueva instancia de
