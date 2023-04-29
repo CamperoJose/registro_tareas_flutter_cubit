@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bl/login_cubit.dart';
+import 'bl/tasks_cubit.dart';
 import 'views/login_view.dart';
 
 void main() => runApp(MyApp());
-
-MyApp myApp = MyApp();
 
 MaterialColor myPink = const MaterialColor(
   0xFF880E4F,
@@ -22,7 +21,6 @@ MaterialColor myPink = const MaterialColor(
     900: Color(0xFF880E4F),
   },
 );
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -42,6 +40,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => LoginCubit(),
           ),
+          BlocProvider(create: (context) => PendingTasksCubit()),
         ],
         child: LoginView(),
       ),

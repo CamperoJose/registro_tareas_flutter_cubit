@@ -4,6 +4,7 @@ import 'package:flutter_keychain/flutter_keychain.dart';
 import 'package:registro_tareas_flutter_cubit/clases/PendingTasks.dart';
 import 'package:registro_tareas_flutter_cubit/views/add_note_view.dart';
 import '../bl/tasks_cubit.dart';
+import '../components/appbar_design1.dart';
 import '../components/todo_item.dart';
 
 class HomeView extends StatelessWidget {
@@ -13,32 +14,15 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _onLogout() {
-      Navigator.pushNamed(context, '/');
-    }
 
     return Scaffold(
       backgroundColor: Colors.indigo[100],
       body: SafeArea(
         child: Column(
           children: [
-            AppBar(
-              backgroundColor: Colors.indigo[100],
-              shadowColor: Colors.transparent,
-              title: Text(
-                'FacileTask',
-                style: TextStyle(
-                  color: Colors.indigo[700],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              leading: IconButton(
-                icon: Icon(Icons.logout_rounded),
-                color: Colors.pink,
-                onPressed: _onLogout,
-                iconSize: 30,
-              ),
-            ),
+            const MyAppBar(title: "Tareas pendientes"),
+
+
             BlocBuilder<PendingTasksCubit, PendingTasks>(
               builder: (PendingTasksCubit, cubitTasks) {
                 return Expanded(
@@ -61,12 +45,14 @@ class HomeView extends StatelessWidget {
           ],
         ),
       ),
+
+
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.indigo[700],
         hoverColor: Colors.indigo[500],
         onPressed: () async {
           var value = await FlutterKeychain.get(key: "AuthToken");
-          print("AuthToken recuperado exitosamente: $value");
 
           final result = await Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => BlocProvider(
