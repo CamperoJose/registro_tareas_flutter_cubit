@@ -5,6 +5,7 @@ import 'package:registro_tareas_flutter_cubit/components/text_field_design1.dart
 import 'package:registro_tareas_flutter_cubit/components/button_design1.dart';
 import '../bl/login_state.dart';
 import '../bl/tasks_cubit.dart';
+import '../components/show_dialog.dart';
 import 'home1_view.dart';
 
 class LoginView extends StatelessWidget {
@@ -24,13 +25,13 @@ class LoginView extends StatelessWidget {
           child: BlocConsumer<LoginCubit, LoginState>(
             listener: (context, state) {
               if (state.status == LoginStatus.failure) {
-                _showErrorDialog(
+                ErrorDialog.showErrorDialog(
                 context: context,
                 title: "Error al iniciar sesión",
                 message: "Usuario o contraseña incorrectos.",
-                icon: Icons.error_outline, // Icono de error personalizado (opcional)
-                titleColor: Colors.red, // Color del tíRtulo (opcional)
-                messageColor: Colors.black, // Color del mensaje (opcional)
+                icon: Icons.error_outline,
+                titleColor: Colors.red,
+                messageColor: Colors.black,
               );
               _userController.clear();
               _passwordController.clear();
@@ -89,62 +90,5 @@ class LoginView extends StatelessWidget {
     );
   }
 
-
-void _showErrorDialog({
-  required BuildContext context,
-  required String title,
-  required String message,
-  IconData? icon,
-  Color? titleColor,
-  Color? messageColor,
-  TextStyle? titleTextStyle,
-  TextStyle? messageTextStyle,
-  String? additionalButtonText,
-  VoidCallback? onAdditionalButtonPressed,
-}) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Row(
-          children: [
-            icon != null
-                ? Icon(icon, color: titleColor ?? Colors.red)
-                : Container(),
-            SizedBox(width: icon != null ? 8.0 : 0.0),
-            Text(
-              title,
-              style: titleTextStyle ??
-                  TextStyle(
-                    color: titleColor ?? Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ],
-        ),
-        content: Text(
-          message,
-          style: messageTextStyle ??
-              TextStyle(
-                color: messageColor ?? Colors.black,
-              ),
-        ),
-        actions: <Widget>[
-          if (additionalButtonText != null && onAdditionalButtonPressed != null)
-            TextButton(
-              child: Text(additionalButtonText),
-              onPressed: onAdditionalButtonPressed,
-            ),
-          TextButton(
-            child: const Text('Aceptar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
 
 }
