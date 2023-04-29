@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bl/login_cubit.dart';
 import 'views/login_view.dart';
 
 void main() => runApp(MyApp());
@@ -20,6 +22,8 @@ MaterialColor myPink = const MaterialColor(
     900: Color(0xFF880E4F),
   },
 );
+
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -33,7 +37,14 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: LoginView(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => LoginCubit(),
+          ),
+        ],
+        child: LoginView(),
+      ),
     );
   }
 }
