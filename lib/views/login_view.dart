@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/components/text_field_design1.dart';
 import 'package:registro_tareas_flutter_cubit/components/button_design1.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
+import '../bl/tasks_cubit.dart';
+import 'home1_view.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -12,20 +15,20 @@ class _LoginViewState extends State<LoginView> {
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  PendingTasksCubit cubitTasks = PendingTasksCubit();
+
   void _signUserIn() {
   // Validar que los campos de entrada no estén vacíos
   if (_userController.text.isEmpty || _passwordController.text.isEmpty) {
-    Fluttertoast.showToast(
-      msg: 'Ingrese los campos requeridos',
-      backgroundColor: Colors.indigo[200],
-      textColor: Colors.indigo[700],
-      gravity: ToastGravity.BOTTOM,
-    );
+
     return;
   }
-  Navigator.pushNamed(context, '/home1');
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+    BlocProvider(
+        create: (context) => cubitTasks,
+        child: HomeView(),
+    ),));
 }
-
 
   @override
   Widget build(BuildContext context) {
