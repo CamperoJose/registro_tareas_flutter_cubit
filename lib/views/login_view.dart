@@ -21,23 +21,34 @@ class LoginView extends StatelessWidget {
       backgroundColor: Colors.indigo[100],
       body: SafeArea(
         child: Center(
-          child: BlocBuilder<LoginCubit, LoginState>(
+          child: BlocConsumer<LoginCubit, LoginState>(
+            listener: (context, state) {
+              if (state.status == LoginStatus.failure) {
+                _showErrorDialog(
+                context: context,
+                title: "Error al iniciar sesión",
+                message: "Usuario o contraseña incorrectos.",
+                icon: Icons.error_outline, // Icono de error personalizado (opcional)
+                titleColor: Colors.red, // Color del tíRtulo (opcional)
+                messageColor: Colors.black, // Color del mensaje (opcional)
+              );
+              _userController.clear();
+              _passwordController.clear();
+              }
+            },
             builder: (context, state) {
               if (state.status == LoginStatus.init) {
                 return _loginForm(context);
               } else if (state.status == LoginStatus.loading) {
                 return const CircularProgressIndicator();
-              }else if(state.status == LoginStatus.failure){
-                return const Text("Error al iniciar sesión");
-              }else if(state.status == LoginStatus.success){
+              } else if (state.status == LoginStatus.success) {
                 return BlocProvider(
                   create: (context) => cubitTasks,
                   child: HomeView(),
                 );
-              }else{
-                return const Text("Error desconocido");
+              } else {
+                return _loginForm(context);
               }
-
             },
           ),
         ),
@@ -77,4 +88,63 @@ class LoginView extends StatelessWidget {
       ],
     );
   }
+
+
+void _showErrorDialog({
+  required BuildContext context,
+  required String title,
+  required String message,
+  IconData? icon,
+  Color? titleColor,
+  Color? messageColor,
+  TextStyle? titleTextStyle,
+  TextStyle? messageTextStyle,
+  String? additionalButtonText,
+  VoidCallback? onAdditionalButtonPressed,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Row(
+          children: [
+            icon != null
+                ? Icon(icon, color: titleColor ?? Colors.red)
+                : Container(),
+            SizedBox(width: icon != null ? 8.0 : 0.0),
+            Text(
+              title,
+              style: titleTextStyle ??
+                  TextStyle(
+                    color: titleColor ?? Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: messageTextStyle ??
+              TextStyle(
+                color: messageColor ?? Colors.black,
+              ),
+        ),
+        actions: <Widget>[
+          if (additionalButtonText != null && onAdditionalButtonPressed != null)
+            TextButton(
+              child: Text(additionalButtonText),
+              onPressed: onAdditionalButtonPressed,
+            ),
+          TextButton(
+            child: const Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 }
