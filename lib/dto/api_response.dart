@@ -12,13 +12,14 @@ class ApiResponse {
   });
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) {
-  return ApiResponse(
-    code: json['code'],
-    response: AuthResponse.fromJson(json['response']),
-    errorMessage: json['errorMessage'] ?? '', // si el campo errorMessage es null, establecerlo en una cadena vacía
-  );
-}
-
+    print(json['response']);
+    return ApiResponse(
+      code: json['code'],
+      response: AuthResponse.fromJson(json['response']),
+      errorMessage: json['errorMessage'] ??
+          '', // si el campo errorMessage es null, establecerlo en una cadena vacía
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
