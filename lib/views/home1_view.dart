@@ -4,6 +4,7 @@ import 'package:flutter_keychain/flutter_keychain.dart';
 import '../bl/tasks_cubit.dart';
 import '../bl/tasks_state.dart';
 import '../components/appbar_design1.dart';
+import 'add_task_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -81,18 +82,36 @@ class HomeView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.indigo[700],
-        hoverColor: Colors.indigo[500],
-        onPressed: () async {
-          var value = await FlutterKeychain.get(key: "AuthToken");
-          BlocProvider.of<TasksCubit>(context).getTasks();
-        },
-        tooltip: 'Agregar nueva tarea',
-        child: const Icon(
-          Icons.add_rounded,
-          size: 50,
-        ),
-      ),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddNoteView()),
+    ).then((_) {
+      BlocProvider.of<TasksCubit>(context).getTasks();
+    });
+  },
+  tooltip: 'Agregar nueva tarea',
+  child: const Icon(Icons.add_rounded, size: 50),
+),
+
+
+
+
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.indigo[700],
+      //   hoverColor: Colors.indigo[500],
+      //   onPressed: () async {
+      //     var value = await FlutterKeychain.get(key: "AuthToken");
+      //     BlocProvider.of<TasksCubit>(context).getTasks();
+      //   },
+      //   tooltip: 'Agregar nueva tarea',
+      //   child: const Icon(
+      //     Icons.add_rounded,
+      //     size: 50,
+      //   ),
+      // ),
+
+
     );
   }
 }
