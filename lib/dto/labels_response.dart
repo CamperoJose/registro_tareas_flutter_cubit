@@ -13,13 +13,15 @@ class LabelResponse {
 class Label {
   int labelId;
   String name;
+  bool deleted;
 
-  Label({required this.labelId, required this.name});
+  Label({required this.labelId, required this.name, required this.deleted});
 
   factory Label.fromJson(Map<String, dynamic> json) {
     return Label(
       labelId: json['labelId'],
       name: json['name'],
+      deleted: json['deleted'],
     );
   }
 }

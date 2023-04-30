@@ -19,6 +19,7 @@ class LabelCreateService {
       body: json.encode({
         "name": name,
         "date": date,
+        "deleted": false
       }),
     );
 
@@ -30,7 +31,7 @@ class LabelCreateService {
   }
 
   static Future<NewLabelResponse> updateLabel(
-      int labelId, String name, String date) async {
+      int labelId, String name, String date, bool a) async {
     final authToken = await FlutterKeychain.get(key: "AuthToken");
 
     final response = await http.put(
@@ -43,6 +44,7 @@ class LabelCreateService {
       body: json.encode({
         "name": name,
         "date": date,
+        "deleted": a
       }),
     );
 

@@ -39,109 +39,123 @@ class AddTagView extends StatelessWidget {
                     );
                   } else if (state.status == LabelsStatus.success) {
                     return ListView.builder(
-                      itemCount: state.labels.length,
-                      itemBuilder: (context, index) {
-                        final label = state.labels[index];
-                        return Container(
-                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.red.shade200,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3), // changes position of shadow
+  itemCount: state.labels.length,
+  itemBuilder: (context, index) {
+    final label = state.labels[index];
+    if (label.deleted == false) {  // <-- Agregar condición if
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.red.shade200,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          title: Text(
+            label.name,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.indigo[100],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.purple,
+                    size: 30,
+                  ),
+                  onPressed: () async {
+                    final updatedName = await showDialog<String>(
+                      context: context,
+                      builder: (context) {
+                        final nameController =
+                            TextEditingController(text: label.name);
+                        return AlertDialog(
+                          title: const Text("Editar Etiqueta"),
+                          content: TextFormField(
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              hintText: "Nuevo nombre",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Por favor, introduce un nombre";
+                              }
+                              return null;
+                            },
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(nameController.text);
+                              },
+                              child: const Text("Aceptar"),
                             ),
                           ],
-                        ),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          title: Text(
-                            label.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.indigo[100],
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.edit,
-                                    color: Colors.purple,
-                                    size: 30,
-                                  ),
-                                  onPressed: () async {
-                                final updatedName = await showDialog<String>(
-                                  context: context,
-                                  builder: (context) {
-                                    final nameController = TextEditingController(text: label.name);
-                                    return AlertDialog(
-                                      title: const Text("Editar Etiqueta"),
-                                      content: TextFormField(
-                                        controller: nameController,
-                                        decoration: const InputDecoration(
-                                          hintText: "Nuevo nombre",
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "Por favor, introduce un nombre";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                      actions: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(nameController.text);
-                                          },
-                                          child: const Text("Aceptar"),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                if (updatedName != null) {
-                                  await BlocProvider.of<LabelCreateCubit>(context)
-                                      .updateLabel(label.labelId, updatedName, DateTime.now().toString());
-                                  BlocProvider.of<LabelsCubit>(context).getLabels();
-                                }
-                              },
-
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.indigo[100],
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ),
-                                  onPressed: () {
-                                    print("presionado boton borrar de ${label.name}");
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-
+                        );
                       },
                     );
+                    if (updatedName != null) {
+                      await BlocProvider.of<LabelCreateCubit>(context)
+                          .updateLabel(
+                              label.labelId,
+                              updatedName,
+                              DateTime.now().toString());
+                      BlocProvider.of<LabelsCubit>(context).getLabels();
+                    }
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.indigo[100],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  onPressed: () async {
+                    await BlocProvider.of<LabelCreateCubit>(context)
+                        .deleteLabel(
+                            label.labelId,
+                            label.name,
+                            DateTime.now().toString(),
+                            true);
+                    BlocProvider.of<LabelsCubit>(context).getLabels();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {  // <-- Agregar else (no se mostrará nada)
+      return SizedBox.shrink();
+    }
+  },
+);
+
                   } else {
                     BlocProvider.of<LabelsCubit>(context).getLabels();
                     return const Center(

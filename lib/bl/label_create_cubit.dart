@@ -24,7 +24,7 @@ class LabelCreateCubit extends Cubit<LabelCreateState> {
     emit(state.copyWith(status: LabelCreateStatus.loading));
     try {
       final response =
-          await LabelCreateService.updateLabel(labelId, name, date);
+          await LabelCreateService.updateLabel(labelId, name, date, false);
       if (response.code == '0000') {
         emit(state.copyWith(status: LabelCreateStatus.success));
       } else {
@@ -34,4 +34,22 @@ class LabelCreateCubit extends Cubit<LabelCreateState> {
       emit(state.copyWith(status: LabelCreateStatus.failure));
     }
   }
+
+  Future<void> deleteLabel(
+      int labelId, String name, String date, bool a) async {
+    emit(state.copyWith(status: LabelCreateStatus.loading));
+    try {
+      final response =
+          await LabelCreateService.updateLabel(labelId, name, date, a);
+      if (response.code == '0000') {
+        emit(state.copyWith(status: LabelCreateStatus.success));
+      } else {
+        emit(state.copyWith(status: LabelCreateStatus.failure));
+      }
+    } catch (e) {
+      emit(state.copyWith(status: LabelCreateStatus.failure));
+    }
+  }
+
+
 }

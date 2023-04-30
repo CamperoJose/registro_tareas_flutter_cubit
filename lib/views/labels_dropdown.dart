@@ -73,22 +73,22 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
                     }
                   });
                 },
-                items: state.labels
-                    .map<DropdownMenuItem<String>>(
-                      (label) => DropdownMenuItem<String>(
-                        value: label.labelId.toString(),
-                        child: conjuntoDeEnteros.contains(label.labelId)
-                            ? Text(
-                                "Quitar: ${label.name}",
-                                style: TextStyle(color: Colors.red),
-                              )
-                            : Text(
-                                "Agregar: ${label.name}",
-                                style: TextStyle(color: Colors.green),
-                              ),
-                      ),
-                    )
-                    .toList(),
+                items: state.labels.where((label) => !label.deleted).map<DropdownMenuItem<String>>((label) {
+                return DropdownMenuItem<String>(
+                  value: label.labelId.toString(),
+                  child: conjuntoDeEnteros.contains(label.labelId)
+                      ? Text(
+                          "Quitar: ${label.name}",
+                          style: TextStyle(color: Colors.red),
+                        )
+                      : Text(
+                          "Agregar: ${label.name}",
+                          style: TextStyle(color: Colors.green),
+                        ),
+                );
+              }).toList(),
+
+
               ),
               IconButton(
                 icon: Icon(Icons.add),
