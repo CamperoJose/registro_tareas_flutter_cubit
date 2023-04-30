@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bl/labels_cubit.dart';
 import '../bl/labels_state.dart';
+import '../bl/tags_cubit.dart';
+import 'add_tag_view.dart';
 
 Set<int> conjuntoDeEnteros = new Set<int>();
 
@@ -15,6 +17,8 @@ class LabelsDropdownButton extends StatefulWidget {
 
 class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
   String? selectedLabel;
+  
+  
 
   @override
   void initState() {
@@ -24,6 +28,7 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<LabelsCubit, LabelsState>(
       listener: (context, state) {
         if (state.status == LabelsStatus.failure) {
@@ -87,9 +92,14 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
               ),
               IconButton(
                 icon: Icon(Icons.add),
-                onPressed: () {
-                  // Acción al presionar el botón
-                },
+                onPressed: () async {
+                  
+                final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddTagView()));
+                // ignore: use_build_context_synchronously
+                BlocProvider.of<LabelsCubit>(context).getLabels();
+
+                ;
+              },
               ),
             ],
           );
