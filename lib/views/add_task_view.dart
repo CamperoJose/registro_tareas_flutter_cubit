@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../components/appbar_design1.dart';
 import '../components/custom_date_time_picker.dart';
 import '../components/custom_elevated_button.dart';
+import '../components/multi_select_dropdown.dart';
 import '../components/text_field_design2.dart';
 
 class AddNoteView extends StatelessWidget {
@@ -37,6 +38,11 @@ class AddNoteView extends StatelessWidget {
                       controller: _noteDate,
                     ),
                     const SizedBox(height: 20),
+                    MultiSelectDropdown(
+                      items: ["1", "2", "3", "4", "5"],
+                      title: "Selecciona elementos",
+                      dropdownColor: Colors.blue.shade100,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -44,7 +50,13 @@ class AddNoteView extends StatelessWidget {
                           child: CustomElevatedButton(
                             buttonText: 'Guardar',
                             onPressed: () {
-                              // Acción a realizar al presionar el botón
+                              var list = ["1", "2"];
+                              print("texto: ${noteName.text}");
+                              print("fecha: ${_noteDate.text}");
+                              print("tags: $list");
+
+
+                              
                             },
                             primaryColor: Colors.green.shade900,
                           ),
@@ -54,7 +66,7 @@ class AddNoteView extends StatelessWidget {
                           child: CustomElevatedButton(
                             buttonText: 'Cancelar',
                             onPressed: () {
-                              // Acción a realizar al presionar el botón
+                              Navigator.pop(context);
                             },
                             primaryColor: Colors.red.shade900,
                           ),

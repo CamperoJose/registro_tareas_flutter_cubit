@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 
+class MultiSelectDropdownController {
+  ValueNotifier<List<String>> _selectedItems = ValueNotifier<List<String>>([]);
+
+  List<String> get selectedItems => _selectedItems.value;
+
+  void updateSelectedItems(List<String> newSelectedItems) {
+    _selectedItems.value = newSelectedItems;
+  }
+}
+
 class MultiSelectDropdown extends StatefulWidget {
   final List<String> items;
   final String title;
   final Color? dropdownColor;
+  final MultiSelectDropdownController? controller;
 
   MultiSelectDropdown({
     Key? key,
     required this.items,
     required this.title,
     this.dropdownColor,
+    this.controller,
   }) : super(key: key);
 
   @override
@@ -18,6 +30,26 @@ class MultiSelectDropdown extends StatefulWidget {
 
 class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
   List<String> _selectedItems = [];
+
+  bool _isDropdownOpened = false;
+
+  void _toggleDropdown() {
+    setState(() {
+      _isDropdownOpened = !_isDropdownOpened;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller != null) {
+      widget.controller!._selectedItems.addListener(() {
+        setState(() {
+          _selectedItems = widget.controller!.selectedItems;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,43 +61,82 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-          ),
-        ),
-        DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            icon: const Icon(Icons.arrow_drop_down_circle_outlined),
-            isExpanded: true,
-            dropdownColor: widget.dropdownColor,
-            items: widget.items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: _selectedItems.contains(value),
-                      onChanged: (bool? isChecked) {
-                        setState(() {
-                          if (isChecked == true) {
-                            _selectedItems.add(value);
-                          } else {
-                            _selectedItems.remove(value);
-                          }
-                        });
-                      },
-                    ),
-                    Text(value),
-                  ],
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {},
+            color: Theme.of(context).primaryColor,
           ),
         ),
         SizedBox(height: 10),
-        Text(
-          'Seleccionados: ${_selectedItems.join(', ')}',
-          style: TextStyle(fontSize: 16),
+        GestureDetector(
+          onTap: _toggleDropdown,
+          child: Container(
+            height: 60, // Aumenta la altura del contenedor aquí.
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Theme.of(context).primaryColor),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.arrow_drop_down_circle_outlined,
+                  color: Theme.of(context).primaryColor,
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      _selectedItems.isEmpty
+                          ? 'Seleccione opciones'
+                          : _selectedItems.join(', '),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).textTheme.bodyText1!.color),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
+        SizedBox(height: 10),
+        _isDropdownOpened
+            ? Material(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: widget.dropdownColor ??
+                        Theme.of(context).canvasColor,
+                  ),
+                  height: 200,
+                  child: ListView.builder(
+                    itemCount: widget.items.length,
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        value: _selectedItems.contains(widget.items[index]),
+                        onChanged: (bool? isChecked) {
+                          setState(() {
+                            if (isChecked == true) {
+                              _selectedItems.add(widget.items[index]);
+                            } else {
+                              _selectedItems.remove(widget.items[index]);
+                            }
+                          });
+                          if (widget.controller != null) {
+                            widget.controller!
+                                .updateSelectedItems(_selectedItems);
+                          }
+                        },
+                        title: Text(widget.items[index]),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }
