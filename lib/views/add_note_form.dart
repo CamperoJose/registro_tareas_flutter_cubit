@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bl/labels_cubit.dart';
 import '../bl/task_create_cubit.dart';
 import '../components/custom_date_time_picker.dart';
 import '../components/custom_elevated_button.dart';
-import '../services/multi_select_dropdown.dart';
+import 'labels_dropdown.dart';
+import 'multi_select_dropdown.dart';
 import '../components/text_field_design2.dart';
 
 class AddNoteForm extends StatelessWidget {
@@ -25,24 +27,14 @@ class AddNoteForm extends StatelessWidget {
           controller: _noteDate,
         ),
         const SizedBox(height: 20),
-        Row(
-          children: [
-            Expanded(
-              child: MultiSelectDropdown(
-                items: const ["1", "2", "3", "4", "5"],
-                title: "Selecciona labels",
-                dropdownColor: Colors.blue.shade100,
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.purpleAccent),
-              onPressed: () {
 
-              },
-            ),
-          ],
+
+        BlocProvider<LabelsCubit>(
+          create: (_) => LabelsCubit(),
+          child: LabelsDropdownButton(),
         ),
-        const SizedBox(height: 20),
+
+        const SizedBox(height: 20), // Espaciado entre los widgets
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bl/labels_cubit.dart';
 import 'bl/login_cubit.dart';
 import 'bl/tasks_cubit.dart';
 import 'views/login_view.dart';
@@ -41,6 +42,9 @@ class MyApp extends StatelessWidget {
             create: (context) => LoginCubit(),
           ),
           BlocProvider(create: (context) => TasksCubit()),
+          BlocProvider<LabelsCubit>(
+      create: (context) => LabelsCubit(),
+    ),
         ],
         child: LoginView(),
       ),

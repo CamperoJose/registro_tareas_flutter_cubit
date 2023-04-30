@@ -37,6 +37,8 @@ class AddNoteView extends StatelessWidget {
                     }
                   },
                 ),
+
+                
               ),
             ),
           ],
