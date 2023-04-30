@@ -5,7 +5,7 @@ import '../dto/task_create_response.dart';
 import '../dto/task_response.dart';
 import 'endpoints.dart';
 
-class TaskService {
+class TaskCreateService {
   static Future<TaskListResponse> getTasks() async {
     final authToken = await FlutterKeychain.get(key: "AuthToken");
     final response = await http.get(
