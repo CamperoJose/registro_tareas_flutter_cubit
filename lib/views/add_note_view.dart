@@ -12,9 +12,9 @@ import '../clases/TagList.dart';
 import '../components/appbar_design1.dart';
 
 class AddNoteView extends StatelessWidget {
-  final PendingTasksCubit cubitTasks;
+  // final PendingTasksCubit cubitTasks;
 
-  AddNoteView(this.cubitTasks);
+  // AddNoteView(this.cubitTasks);
 
   Widget build(BuildContext context) {
     final TagsCubit cubitTags = TagsCubit();

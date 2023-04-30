@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => LoginCubit(),
           ),
-          BlocProvider(create: (context) => PendingTasksCubit()),
+          BlocProvider(create: (context) => TasksCubit()),
         ],
         child: LoginView(),
       ),

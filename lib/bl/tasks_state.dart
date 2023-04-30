@@ -1,25 +1,27 @@
 import 'package:equatable/equatable.dart';
+import '../dto/task_response.dart';
 
+enum TasksStatus { init, loading, success, failure }
 
-enum TaskStatus {init, loading, success, failure }
+class TasksState extends Equatable {
+  final TasksStatus status;
+  final List<Task> tasks;
 
-class LoginState extends Equatable {
-  final TaskStatus status;
-
-  const LoginState({
-    this.status = TaskStatus.init,
+  const TasksState({
+    this.status = TasksStatus.init,
+    this.tasks = const [],
   });
 
-  LoginState copyWith({
-    TaskStatus? status,
+  TasksState copyWith({
+    TasksStatus? status,
+    List<Task>? tasks,
   }) {
-    return LoginState(
+    return TasksState(
       status: status ?? this.status,
+      tasks: tasks ?? this.tasks,
     );
   }
+
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [status, tasks];
 }
-
-
-

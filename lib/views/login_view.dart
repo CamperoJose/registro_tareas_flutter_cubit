@@ -37,11 +37,15 @@ class LoginView extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<PendingTasksCubit>(context),
-                      child: HomeView(),
+                      value: BlocProvider.of<TasksCubit>(context),
+                      child: BlocProvider.value(
+                        value: BlocProvider.of<LoginCubit>(context),
+                        child: HomeView(),
+                      ),
                     ),
                   ),
                 );
+
               }
             },
             builder: (context, state) {
