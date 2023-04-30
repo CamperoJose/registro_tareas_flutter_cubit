@@ -53,10 +53,10 @@ class _HomeViewState extends State<HomeView> {
                 }
               },
               buildWhen: (previous, current) {
-                return previous.status != current.status;
+                return true;
               },
               listenWhen: (previous, current) {
-                return previous.status != current.status;
+                return true;
               },
               builder: (context, state) {
                 if (state.status == TasksStatus.loading) {
@@ -103,9 +103,8 @@ class _HomeViewState extends State<HomeView> {
                 child: AddNoteView(),
             ),
           
-          
-          
           ));
+
 
           // ignore: use_build_context_synchronously
           BlocProvider.of<TasksCubit>(context).getTasks();

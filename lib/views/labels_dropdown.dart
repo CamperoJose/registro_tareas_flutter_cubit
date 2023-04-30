@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bl/label_create_cubit.dart';
 import '../bl/labels_cubit.dart';
 import '../bl/labels_state.dart';
 import '../bl/tags_cubit.dart';
@@ -17,8 +18,6 @@ class LabelsDropdownButton extends StatefulWidget {
 
 class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
   String? selectedLabel;
-  
-  
 
   @override
   void initState() {
@@ -28,7 +27,6 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocConsumer<LabelsCubit, LabelsState>(
       listener: (context, state) {
         if (state.status == LabelsStatus.failure) {
@@ -52,6 +50,7 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
         }
       },
       builder: (context, state) {
+        print("reconstruyendo dropdown");
         if (state.status == LabelsStatus.loading) {
           return LinearProgressIndicator();
         } else if (state.status == LabelsStatus.success) {
@@ -60,7 +59,8 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
             children: [
               DropdownButton<String>(
                 value: selectedLabel,
-                hint: Text('Cantidad de etiquetas: ${conjuntoDeEnteros.length}'),
+                hint:
+                    Text('Cantidad de etiquetas: ${conjuntoDeEnteros.length}'),
                 underline: Container(
                   height: 0,
                 ),
@@ -93,13 +93,23 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
               IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (context) => LabelCreateCubit(),
+                        ),
+                        BlocProvider<LabelsCubit>(
+                          create: (context) => LabelsCubit()..getLabels(),
+                        ),
+                      ],
+                      child: AddTagView(),
+                    ))
+                  );
                   
-                final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddTagView()));
-                // ignore: use_build_context_synchronously
-                BlocProvider.of<LabelsCubit>(context).getLabels();
-
-                ;
-              },
+                  BlocProvider.of<LabelsCubit>(context).getLabels();
+                },
               ),
             ],
           );

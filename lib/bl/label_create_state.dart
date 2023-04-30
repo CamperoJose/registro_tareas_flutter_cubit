@@ -9,6 +9,8 @@ class LabelCreateState extends Equatable {
     this.status = LabelCreateStatus.init,
   });
 
+  get labels => null;
+
   LabelCreateState copyWith({
     LabelCreateStatus? status,
   }) {
