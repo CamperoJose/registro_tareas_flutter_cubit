@@ -18,4 +18,20 @@ class LabelCreateCubit extends Cubit<LabelCreateState> {
       emit(state.copyWith(status: LabelCreateStatus.failure));
     }
   }
+
+  Future<void> updateLabel(
+      int labelId, String name, String date) async {
+    emit(state.copyWith(status: LabelCreateStatus.loading));
+    try {
+      final response =
+          await LabelCreateService.updateLabel(labelId, name, date);
+      if (response.code == '0000') {
+        emit(state.copyWith(status: LabelCreateStatus.success));
+      } else {
+        emit(state.copyWith(status: LabelCreateStatus.failure));
+      }
+    } catch (e) {
+      emit(state.copyWith(status: LabelCreateStatus.failure));
+    }
+  }
 }

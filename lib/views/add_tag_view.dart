@@ -42,9 +42,70 @@ class AddTagView extends StatelessWidget {
                       itemCount: state.labels.length,
                       itemBuilder: (context, index) {
                         final label = state.labels[index];
-                        return ListTile(
-                          title: Text(label.name),
-                        );
+                        return Container(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red.shade200,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          title: Text(
+                            label.name,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.indigo[100],
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Colors.purple,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    print("presionado boton editar de ${label.name}");
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.indigo[100],
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    print("presionado boton borrar de ${label.name}");
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+
                       },
                     );
                   } else {

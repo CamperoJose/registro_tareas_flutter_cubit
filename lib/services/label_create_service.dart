@@ -28,4 +28,28 @@ class LabelCreateService {
       throw Exception('Error al crear la etiqueta');
     }
   }
+
+  static Future<NewLabelResponse> updateLabel(
+      int labelId, String name, String date) async {
+    final authToken = await FlutterKeychain.get(key: "AuthToken");
+
+    final response = await http.put(
+      Uri.parse(urlBase + updateLabelEndpoint + "/$labelId"),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $authToken",
+      },
+      body: json.encode({
+        "name": name,
+        "date": date,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return NewLabelResponse.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Error al actualizar la etiqueta');
+    }
+  }
 }
