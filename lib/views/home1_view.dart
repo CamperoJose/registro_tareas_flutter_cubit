@@ -61,7 +61,9 @@ class _HomeViewState extends State<HomeView> {
               builder: (context, state) {
                 if (state.status == TasksStatus.loading) {
                   return const Expanded(
-                      child: Center(child: CircularProgressIndicator()));
+                      child: Center(child: CircularProgressIndicator(
+                  color: Colors.red,
+                )));
                 } else if (state.status == TasksStatus.success) {
                   if (state.tasks.isNotEmpty) {
                     return Expanded(

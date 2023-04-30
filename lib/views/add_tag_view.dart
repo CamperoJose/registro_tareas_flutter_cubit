@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:registro_tareas_flutter_cubit/views/add_task_view.dart';
 import 'package:flutter/material.dart';
 import '../bl/tags_cubit.dart';
 import '../clases/Tag.dart';
