@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class NewTagButton extends StatefulWidget {
   final Function(String) onSave;
+  final TextEditingController newTagNameController;
 
-  const NewTagButton({Key? key, required this.onSave}) : super(key: key);
+  const NewTagButton({
+    Key? key,
+    required this.onSave,
+    required this.newTagNameController,
+  }) : super(key: key);
 
   @override
   _NewTagButtonState createState() => _NewTagButtonState();
@@ -11,7 +16,6 @@ class NewTagButton extends StatefulWidget {
 
 class _NewTagButtonState extends State<NewTagButton> {
   bool _showNewTagForm = false;
-  final _newTagNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +42,7 @@ class _NewTagButtonState extends State<NewTagButton> {
             children: [
               Expanded(
                 child: TextField(
-                  controller: _newTagNameController,
+                  controller: widget.newTagNameController,
                   decoration: InputDecoration(
                     hintText: 'Nueva Etiqueta',
                     border: OutlineInputBorder(),
@@ -48,8 +52,8 @@ class _NewTagButtonState extends State<NewTagButton> {
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
-                  widget.onSave(_newTagNameController.text);
-                  _newTagNameController.clear();
+                  widget.onSave(widget.newTagNameController.text);
+                  widget.newTagNameController.clear();
                   setState(() {
                     _showNewTagForm = false;
                   });

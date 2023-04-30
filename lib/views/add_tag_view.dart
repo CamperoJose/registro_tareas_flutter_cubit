@@ -16,14 +16,12 @@ class AddTagView extends StatelessWidget {
       backgroundColor: Colors.indigo[100],
       body: SafeArea(
         child: Column(
-          
-          
-          
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MyAppBar(title: "Editar Etiquetas"),
-
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: kVerticalPadding),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 25.0, vertical: kVerticalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -32,43 +30,36 @@ class AddTagView extends StatelessWidget {
                       TagsCubit().addTag(Tag(newTagName));
                       TagsCubit().listedTag();
                     },
+                    newTagNameController: _newTagNameController,
                   ),
-
-
                   SizedBox(height: 10),
-
                   Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: CustomElevatedButton(
-                      buttonText: 'Guardar',
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      primaryColor: Colors.green.shade900,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-
-                  Expanded(
-                    child: CustomElevatedButton(
-                      buttonText: 'Cancelar',
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      primaryColor: Colors.red.shade900,
-                    ),
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: CustomElevatedButton(
+                          buttonText: 'Guardar',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          primaryColor: Colors.green.shade900,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: CustomElevatedButton(
+                          buttonText: 'Cancelar',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          primaryColor: Colors.red.shade900,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-
-                ],
-              ),
-            
-              
             ),
-            
           ],
         ),
       ),
