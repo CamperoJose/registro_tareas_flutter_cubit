@@ -1,23 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../dto/task_response.dart';
+import '../services/tasks_service.dart';
+import 'tasks_state.dart';
 
-import '../clases/Note.dart';
-import '../clases/PendingTasks.dart';
+class TasksCubit extends Cubit<TasksState> {
+  TasksCubit() : super(TasksState());
 
-class PendingTasksCubit extends Cubit<PendingTasks> {
-  PendingTasksCubit() : super(PendingTasks([]));
-
-  void listedTasks(){
-    emit(PendingTasksList = PendingTasksList.copyWith(tasks: PendingTasksList.notes1));
-  }
-
-  bool addNewNote(Note miNotaA) {
+  Future<void> getTasks() async {
+    emit(state.copyWith(status: TasksStatus.loading));
     try {
-      PendingTasksList.addNote(miNotaA);
-      emit(PendingTasksList);
-      print("Tamaño de la lista ${PendingTasksList.getSize()}");
-      return true;
+      final response = await TaskService.getTasks();
+      List<Task> tasks = response.tasks;
+      emit(state.copyWith(status: TasksStatus.success, tasks: tasks));
     } catch (e) {
-      return false;
+      emit(state.copyWith(status: TasksStatus.failure));
     }
   }
 }

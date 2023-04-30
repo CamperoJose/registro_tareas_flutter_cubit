@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/bl/login_cubit.dart';
-import 'package:registro_tareas_flutter_cubit/components/text_field_design1.dart';
-import 'package:registro_tareas_flutter_cubit/components/button_design1.dart';
 import '../bl/login_state.dart';
-import '../bl/tasks_cubit.dart';
 import '../components/login_form.dart';
 import '../components/show_dialog.dart';
 import 'home1_view.dart';
+import 'package:registro_tareas_flutter_cubit/bl/tasks_cubit.dart';
 
 class LoginView extends StatelessWidget {
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  PendingTasksCubit cubitTasks = PendingTasksCubit();
 
   LoginView({Key? key}) : super(key: key);
 
@@ -36,6 +32,20 @@ class LoginView extends StatelessWidget {
                 );
                 _userController.clear();
                 _passwordController.clear();
+              } else if (state.status == LoginStatus.success) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                      value: BlocProvider.of<TasksCubit>(context),
+                      child: BlocProvider.value(
+                        value: BlocProvider.of<LoginCubit>(context),
+                        child: HomeView(),
+                      ),
+                    ),
+                  ),
+                );
+
               }
             },
             builder: (context, state) {
@@ -43,11 +53,6 @@ class LoginView extends StatelessWidget {
                 return LoginForm();
               } else if (state.status == LoginStatus.loading) {
                 return const CircularProgressIndicator();
-              } else if (state.status == LoginStatus.success) {
-                return BlocProvider(
-                  create: (context) => cubitTasks,
-                  child: HomeView(),
-                );
               } else {
                 return LoginForm();
               }
