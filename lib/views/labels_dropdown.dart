@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bl/labels_cubit.dart';
 import '../bl/labels_state.dart';
 
+Set<int> conjuntoDeEnteros = new Set<int>();
+
 class LabelsDropdownButton extends StatefulWidget {
   const LabelsDropdownButton({Key? key}) : super(key: key);
 
@@ -47,28 +49,56 @@ class _LabelsDropdownButtonState extends State<LabelsDropdownButton> {
       builder: (context, state) {
         if (state.status == LabelsStatus.loading) {
           return LinearProgressIndicator();
-            
         } else if (state.status == LabelsStatus.success) {
-          return DropdownButton<String>(
-            value: selectedLabel,
-            hint: const Text('Seleccionar etiqueta'),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedLabel = newValue;
-              });
-            },
-            items: state.labels
-                .map<DropdownMenuItem<String>>(
-                  (label) => DropdownMenuItem<String>(
-                    value: label.name,
-                    child: Text(label.name),
-                  ),
-                )
-                .toList(),
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DropdownButton<String>(
+                value: selectedLabel,
+                hint: Text('Cantidad de etiquetas: ${conjuntoDeEnteros.length}'),
+                underline: Container(
+                  height: 0,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    if (conjuntoDeEnteros.contains(int.parse(newValue!))) {
+                      conjuntoDeEnteros.remove(int.parse(newValue));
+                    } else {
+                      conjuntoDeEnteros.add(int.parse(newValue));
+                    }
+                  });
+                },
+                items: state.labels
+                    .map<DropdownMenuItem<String>>(
+                      (label) => DropdownMenuItem<String>(
+                        value: label.labelId.toString(),
+                        child: conjuntoDeEnteros.contains(label.labelId)
+                            ? Text(
+                                "Quitar: ${label.name}",
+                                style: TextStyle(color: Colors.red),
+                              )
+                            : Text(
+                                "Agregar: ${label.name}",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                      ),
+                    )
+                    .toList(),
+              ),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  // Acción al presionar el botón
+                },
+              ),
+            ],
           );
         } else {
           return const SizedBox.shrink();
         }
+      },
+      listenWhen: (previous, current) {
+        return false;
       },
     );
   }

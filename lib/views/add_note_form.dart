@@ -5,11 +5,9 @@ import '../bl/task_create_cubit.dart';
 import '../components/custom_date_time_picker.dart';
 import '../components/custom_elevated_button.dart';
 import 'labels_dropdown.dart';
-import 'multi_select_dropdown.dart';
 import '../components/text_field_design2.dart';
 
 class AddNoteForm extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     // Controladores para los campos de texto y fecha
@@ -28,7 +26,6 @@ class AddNoteForm extends StatelessWidget {
         ),
         const SizedBox(height: 20),
 
-
         BlocProvider<LabelsCubit>(
           create: (_) => LabelsCubit(),
           child: LabelsDropdownButton(),
@@ -42,11 +39,13 @@ class AddNoteForm extends StatelessWidget {
               child: CustomElevatedButton(
                 buttonText: 'Guardar',
                 onPressed: () async {
-                  // Convertir la fecha seleccionada a formato ISO8601 y guardar la tarea
-                  DateTime date1 = DateTime.parse("${_noteDate.text.replaceAll(" ", "T")}Z");
+                  List<int> list = conjuntoDeEnteros.toList();
+
+                  DateTime date1 =
+                      DateTime.parse("${_noteDate.text.replaceAll(" ", "T")}Z");
                   String fecha2 = date1.toIso8601String();
-                  await BlocProvider.of<TaskCreateCubit>(context).createTask(
-                      noteName.text, fecha2, [1, 2, 3, 4]);
+                  await BlocProvider.of<TaskCreateCubit>(context)
+                      .createTask(noteName.text, fecha2, list);
                 },
                 primaryColor: Colors.green.shade900,
               ),
