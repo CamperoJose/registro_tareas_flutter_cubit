@@ -8,6 +8,7 @@ import '../components/custom_date_time_picker.dart';
 import '../components/custom_elevated_button.dart';
 import '../components/multi_select_dropdown.dart';
 import '../components/text_field_design2.dart';
+import 'package:intl/intl.dart';
 
 class AddNoteView extends StatelessWidget {
   const AddNoteView({Key? key}) : super(key: key);
@@ -79,13 +80,13 @@ class AddNoteView extends StatelessWidget {
                 buttonText: 'Guardar',
                 onPressed: () async {
                   var list = ["1", "2"];
-                  print("texto: ${noteName.text}");
-                  print("fecha: ${_noteDate.text}");
-                  print("tags: $list");
 
-                  await BlocProvider.of<TaskCreateCubit>(context)
-                      .createTask(noteName.text, "2019-02-01T00:00:00Z", [1, 2, 3, 4]);
-            
+                  DateTime date1 = DateTime.parse("${_noteDate.text.replaceAll(" ", "T")}Z");
+                  String fecha2 = date1.toIso8601String();
+
+                  await BlocProvider.of<TaskCreateCubit>(context).createTask(
+                      noteName.text, fecha2, [1, 2, 3, 4]);
+
                   //Navigator.pop(context);
                 },
                 primaryColor: Colors.green.shade900,
