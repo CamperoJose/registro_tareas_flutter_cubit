@@ -6,25 +6,10 @@ import '../dto/task_response.dart';
 import 'endpoints.dart';
 
 class TaskCreateService {
-  static Future<TaskListResponse> getTasks() async {
-    final authToken = await FlutterKeychain.get(key: "AuthToken");
-    final response = await http.get(
-      Uri.parse(urlBase + listTasksEndpoint),
-      headers: {
-        "Authorization": "Bearer $authToken",
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return TaskListResponse.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Error al obtener las tareas');
-    }
-  }
-
   static Future<NewTaskResponse> createTask(
       String description, String date, List<int> labelIds) async {
     final authToken = await FlutterKeychain.get(key: "AuthToken");
+    print("llega aqui");
 
     final response = await http.post(
       Uri.parse(urlBase + createTaskEndpoint),
@@ -39,6 +24,8 @@ class TaskCreateService {
         "labelIds": labelIds,
       }),
     );
+
+    print(response.statusCode);
 
     if (response.statusCode == 200) {
       return NewTaskResponse.fromJson(json.decode(response.body));
