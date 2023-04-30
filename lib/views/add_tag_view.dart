@@ -79,9 +79,43 @@ class AddTagView extends StatelessWidget {
                                     color: Colors.purple,
                                     size: 30,
                                   ),
-                                  onPressed: () {
-                                    print("presionado boton editar de ${label.name}");
+                                  onPressed: () async {
+                                final updatedName = await showDialog<String>(
+                                  context: context,
+                                  builder: (context) {
+                                    final nameController = TextEditingController(text: label.name);
+                                    return AlertDialog(
+                                      title: const Text("Editar Etiqueta"),
+                                      content: TextFormField(
+                                        controller: nameController,
+                                        decoration: const InputDecoration(
+                                          hintText: "Nuevo nombre",
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return "Por favor, introduce un nombre";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(nameController.text);
+                                          },
+                                          child: const Text("Aceptar"),
+                                        ),
+                                      ],
+                                    );
                                   },
+                                );
+                                if (updatedName != null) {
+                                  await BlocProvider.of<LabelCreateCubit>(context)
+                                      .updateLabel(label.labelId, updatedName, DateTime.now().toString());
+                                  BlocProvider.of<LabelsCubit>(context).getLabels();
+                                }
+                              },
+
                                 ),
                               ),
                               SizedBox(width: 8),
@@ -145,12 +179,6 @@ class AddTagView extends StatelessWidget {
                         );
                         _newTagNameController.clear();
                         BlocProvider.of<LabelsCubit>(context).getLabels();
-                      } else if (state.status == LabelCreateStatus.failure) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Error al crear la etiqueta"),
-                          ),
-                        );
                       }
                     },
                     buildWhen: (previous, current) {
