@@ -21,16 +21,20 @@ class TaskListResponse {
 }
 
 class Task {
-  final int taskId;
-  final String description;
-  final String date;
-  final List<int> labelIds;
+  int taskId;
+  String description;
+  String date;
+  List<int> labelIds;
+  bool isDone;
+  String dateFinish;
 
   Task({
     required this.taskId,
     required this.description,
     required this.date,
     required this.labelIds,
+    required this.isDone,
+    required this.dateFinish,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,19 @@ class Task {
       description: json['description'],
       date: json['date'],
       labelIds: List<int>.from(json['labelIds']),
+      isDone: json['isDone'],
+      dateFinish: json['dateFinish'],
+    );
+  }
+
+  factory Task.fromUpdateJson(Map<String, dynamic> json) {
+    return Task(
+      taskId: json['taskId'],
+      description: json['description'],
+      date: json['date'],
+      labelIds: List<int>.from(json['labelIds']),
+      isDone: json['isDone'],
+      dateFinish: json['dateFinish'],
     );
   }
 }

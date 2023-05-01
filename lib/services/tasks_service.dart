@@ -20,4 +20,30 @@ class TaskService {
       throw Exception('Error al obtener las tareas');
     }
   }
+
+  static Future<Task> updateTask(int taskId, String description, String date, List<int> labelIds, bool isDone, String date2) async {
+  final authToken = await FlutterKeychain.get(key: "AuthToken");
+  final response = await http.put(
+    Uri.parse(urlBase + updateTaskEndpoint.replaceFirst("{taskId}", taskId.toString())),
+    headers: {
+      "Authorization": "Bearer $authToken",
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    body: jsonEncode({
+      "description": description,
+      "date": date,
+      "labelIds": labelIds,
+      "isDone": isDone,
+      "dateFinish": date2,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    return Task.fromJson(json.decode(response.body)["response"]);
+  } else {
+    throw Exception('Error al actualizar la tarea');
+  }
+}
+
 }

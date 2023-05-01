@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/components/text_field_design1.dart';
 
 import '../bl/login_cubit.dart';
-import 'button_design1.dart';
+import '../components/button_design1.dart';
 
 class LoginForm extends StatelessWidget {
   final TextEditingController _userController = TextEditingController();

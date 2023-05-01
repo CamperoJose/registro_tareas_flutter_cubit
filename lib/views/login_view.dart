@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registro_tareas_flutter_cubit/bl/login_cubit.dart';
 import '../bl/login_state.dart';
-import '../components/login_form.dart';
+import 'login_form.dart';
 import '../components/show_dialog.dart';
 import 'home1_view.dart';
 import 'package:registro_tareas_flutter_cubit/bl/tasks_cubit.dart';
@@ -52,7 +52,9 @@ class LoginView extends StatelessWidget {
               if (state.status == LoginStatus.init) {
                 return LoginForm();
               } else if (state.status == LoginStatus.loading) {
-                return const CircularProgressIndicator();
+                return const CircularProgressIndicator(
+                  color: Colors.indigo,
+                );
               } else {
                 return LoginForm();
               }

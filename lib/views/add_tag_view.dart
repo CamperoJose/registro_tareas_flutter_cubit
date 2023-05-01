@@ -1,23 +1,14 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:registro_tareas_flutter_cubit/views/add_task_view.dart';
 import 'package:flutter/material.dart';
-import '../bl/tags_cubit.dart';
-import '../clases/Tag.dart';
-import '../clases/TagList.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bl/label_create_state.dart';
+import '../bl/label_create_cubit.dart';
+import '../bl/labels_cubit.dart';
+import '../bl/labels_state.dart';
 import '../components/appbar_design1.dart';
-import '../components/tag_item.dart';
+import '../components/custom_elevated_button.dart';
+import '../components/new_tag_button.dart';
 
-class AddTagView extends StatefulWidget {
-  final TagsCubit cubitTags;
-
-  AddTagView(this.cubitTags);
-
-  @override
-  _AddTagViewState createState() => _AddTagViewState();
-}
-
-class _AddTagViewState extends State<AddTagView> {
-  bool _showNewTagForm = false;
+class AddTagView extends StatelessWidget {
   final _newTagNameController = TextEditingController();
 
   @override
@@ -30,155 +21,216 @@ class _AddTagViewState extends State<AddTagView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MyAppBar(title: "Editar Etiquetas"),
-            BlocProvider(
-              create: (context) => widget.cubitTags,
-              child: BlocBuilder<TagsCubit, ListedTags>(
+            Expanded(
+              child: BlocConsumer<LabelsCubit, LabelsState>(
+                listener: (context, state) {},
+                buildWhen: (previous, current) {
+                  return true;
+                },
+                listenWhen: (previous, current) {
+                  return true;
+                },
                 builder: (context, state) {
-                  print("reconstruye el widget2");
-return Expanded(
-child: ListView.builder(
-itemCount: state.getSize(),
-itemBuilder: (context, index) {
-return Container(
-child: Row(
-children: [
-Expanded(
-child: Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: [
-TagItem(state.tags[index]),
-],
-),
-),
-IconButton(
-onPressed: () {
-widget.cubitTags.removeAt(index);
-widget.cubitTags.listedTag();
-},
-icon: Icon(Icons.delete),
-color: Colors.red,
-),
-],
-));
-},
-),
-);
-},
-),
-),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              widget.cubitTags.addTag(Tag('Nueva Etiqueta'));
-            },
-            child: Text('Agregar Etiqueta'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 50),
-              primary: Colors.indigo,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  print(
+                      "reconstruyendo listado de etiquetas con estado: $state");
+                  if (state.status == LabelsStatus.loading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state.status == LabelsStatus.success) {
+                    return ListView.builder(
+  itemCount: state.labels.length,
+  itemBuilder: (context, index) {
+    final label = state.labels[index];
+    if (label.deleted == false) {  // <-- Agregar condición if
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.red.shade200,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
             ),
-          ),
+          ],
         ),
-        if (!_showNewTagForm)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _showNewTagForm = true;
-                });
-              },
-              child: Text('Nueva Etiqueta'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-                primary: Colors.indigo,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          title: Text(
+            label.name,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
-          ),
-        SizedBox(height: 10),
-        if (_showNewTagForm)
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _newTagNameController,
-                    decoration: InputDecoration(
-                      hintText: 'Nueva Etiqueta',
-                      border: OutlineInputBorder(),
-                    ),
+          ),                        
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.indigo[100],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    color: Colors.purple,
+                    size: 30,
                   ),
-                ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    widget.cubitTags.addTag(Tag(_newTagNameController.text));
-                    widget.cubitTags.listedTag();
-                    _newTagNameController.clear();
-                    setState(() {
-                      _showNewTagForm = false;
-                    });
+                  onPressed: () async {
+                    final updatedName = await showDialog<String>(
+                      context: context,
+                      builder: (context) {
+                        final nameController =
+                            TextEditingController(text: label.name);
+                        return AlertDialog(
+                          title: const Text("Editar Etiqueta"),
+                          content: TextFormField(
+                            controller: nameController,
+                            decoration: const InputDecoration(
+                              hintText: "Nuevo nombre",
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Por favor, introduce un nombre";
+                              }
+                              return null;
+                            },
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(nameController.text);
+                              },
+                              child: const Text("Aceptar"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    if (updatedName != null) {
+                      await BlocProvider.of<LabelCreateCubit>(context)
+                          .updateLabel(
+                              label.labelId,
+                              updatedName,
+                              DateTime.now().toString());
+                      BlocProvider.of<LabelsCubit>(context).getLabels();
+                    }
                   },
-                  child: Text('Guardar'),
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _showNewTagForm = false;
-                    });
-                  },
-                  child: Text('Cerrar'),
-                ),
-              ],
-            ),
-          ),
-
-        SizedBox(height: 10),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, widget.cubitTags.state);
-            },
-            child: Text('Guardar'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 50),
-              primary: Colors.green[700],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
               ),
-            ),
+              SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.indigo[100],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                  onPressed: () async {
+                    await BlocProvider.of<LabelCreateCubit>(context)
+                        .deleteLabel(
+                            label.labelId,
+                            label.name,
+                            DateTime.now().toString(),
+                            true);
+                    BlocProvider.of<LabelsCubit>(context).getLabels();
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Cancelar'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(double.infinity, 50),
-              primary: Colors.red.shade900,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
+      );
+    } else {  // <-- Agregar else (no se mostrará nada)
+      return SizedBox.shrink();
+    }
+  },
 );
-}
+
+                  } else {
+                    BlocProvider.of<LabelsCubit>(context).getLabels();
+                    return const Center(
+                      child: Text('Failed to load labels'),
+                    );
+                  }
+                },
+              ),
+            ),
+            Container(
+              height: 120.0,
+              alignment: Alignment.bottomCenter,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  NewTagButton(
+                    newTagNameController: _newTagNameController,
+                    onSave: (newTagName) async {
+                      // Aquí puedes usar el LabelCreateCubit para crear una nueva etiqueta
+                      await BlocProvider.of<LabelCreateCubit>(context)
+                          .createLabel(newTagName, DateTime.now().toString());
+                      BlocProvider.of<LabelsCubit>(context).getLabels();
+                    },
+                  ),
+                  const SizedBox(height: 10.0),
+                  BlocConsumer<LabelCreateCubit, LabelCreateState>(
+                    listenWhen: (previous, current) => true,
+                    listener: (context, state) {
+                      if (state.status == LabelCreateStatus.success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Etiqueta creada correctamente"),
+                          ),
+                        );
+                        _newTagNameController.clear();
+                        BlocProvider.of<LabelsCubit>(context).getLabels();
+                      }
+                    },
+                    buildWhen: (previous, current) {
+                      return true;
+                    },
+                    builder: (context, state) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: CustomElevatedButton(
+                              buttonText: 'Guardar',
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              primaryColor: Colors.green.shade900,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: CustomElevatedButton(
+                              buttonText: 'Cancelar',
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              primaryColor: Colors.red.shade900,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

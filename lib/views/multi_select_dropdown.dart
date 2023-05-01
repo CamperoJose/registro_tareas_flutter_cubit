@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 class MultiSelectDropdownController {
   ValueNotifier<List<String>> _selectedItems = ValueNotifier<List<String>>([]);
-
   List<String> get selectedItems => _selectedItems.value;
 
   void updateSelectedItems(List<String> newSelectedItems) {
     _selectedItems.value = newSelectedItems;
   }
 }
-
 class MultiSelectDropdown extends StatefulWidget {
   final List<String> items;
   final String title;
@@ -54,17 +52,7 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
-        SizedBox(height: 10),
         GestureDetector(
           onTap: _toggleDropdown,
           child: Container(
@@ -74,13 +62,10 @@ class _MultiSelectDropdownState extends State<MultiSelectDropdown> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Theme.of(context).primaryColor),
             ),
+
             child: Row(
               children: [
-                Icon(
-                  Icons.arrow_drop_down_circle_outlined,
-                  color: Theme.of(context).primaryColor,
-                ),
-                SizedBox(width: 10),
+
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
