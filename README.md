@@ -1,16 +1,20 @@
-# registro_tareas_flutter_cubit
+## Aplicación movil para el registro de tareas
+Este proyecto consiste en una aplicación móvil desarrollada en Flutter para registrar y gestionar tareas.
 
-A new Flutter project.
+## Instalación
+Para instalar y ejecutar la aplicación en tu dispositivo o emulador, sigue los siguientes pasos:
 
-## Getting Started
+1. Descarga o clona el repositorio.
+2. Abre el proyecto en un IDE que tenga instalado Flutter.
+3. Ejecuta el comando "flutter run" en la terminal para compilar y ejecutar la aplicación.
 
-This project is a starting point for a Flutter application.
+## Uso
+Una vez que la aplicación se esté ejecutando en tu dispositivo o emulador, puedes agregar nuevas tareas haciendo clic en el botón "Agregar tarea". Para editar o eliminar tareas, haz clic en la tarea que deseas modificar y selecciona la opción correspondiente.
 
-A few resources to get you started if this is your first Flutter project:
+## Autor
+Este proyecto fue desarrollado por José Antonio Campero Morales.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Licencia
+Este proyecto no está sujeto a ninguna licencia.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+¡Gracias por utilizar esta aplicación!##
