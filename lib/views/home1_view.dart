@@ -255,7 +255,12 @@ class HomeView extends StatelessWidget {
                         }
                       } else {
                         BlocProvider.of<TasksCubit>(context).getTasks();
-                        return const SizedBox.shrink();
+                        return FloatingActionButton(
+            onPressed: () {
+              BlocProvider.of<TasksCubit>(context).getTasks();
+            },
+            child: Icon(Icons.refresh));
+          
                       }
                     } else {
                       return const Expanded(
