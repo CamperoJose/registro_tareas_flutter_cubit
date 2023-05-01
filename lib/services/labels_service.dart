@@ -20,4 +20,21 @@ class LabelService {
       throw Exception('Error al obtener las etiquetas');
     }
   }
+
+  static Future<Label> getLabelById(int id) async {
+    final authToken = await FlutterKeychain.get(key: "AuthToken");
+    final response = await http.get(
+      Uri.parse('$urlBase/label/$id'),
+      headers: {
+        "Authorization": "Bearer $authToken",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return Label.fromJson(json['response']);
+    } else {
+      throw Exception('Error al obtener la etiqueta');
+    }
+  }
 }

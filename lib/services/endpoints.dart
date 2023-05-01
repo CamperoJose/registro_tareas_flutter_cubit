@@ -5,3 +5,4 @@ const String createTaskEndpoint = "/api/v1/task";
 const String listLabelsEndpoint = "/api/v1/label";
 const String createLabelEndpoint = "/api/v1/label";
 const String updateLabelEndpoint = "/api/v1/label";
+const String updateTaskEndpoint = "/api/v1/task/{taskId}";

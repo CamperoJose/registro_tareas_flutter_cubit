@@ -1,25 +1,29 @@
-// En home_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keychain/flutter_keychain.dart';
+import 'package:intl/intl.dart';
+import 'package:registro_tareas_flutter_cubit/dto/labels_response.dart';
 import '../bl/task_create_cubit.dart';
 import '../bl/tasks_cubit.dart';
 import '../bl/tasks_state.dart';
 import '../components/appbar_design1.dart';
+import '../services/labels_service.dart';
 import 'add_task_view.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
-  @override
-  _HomeViewState createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  @override
-  void initState() {
-    BlocProvider.of<TasksCubit>(context).getTasks();
-    super.initState();
+  // Lógica para conseguir listado de etiquetas y sus nombres:
+  Future<List<String>> getLabelsNames() async {
+    try {
+      final response = await LabelService.getLabels();
+      final labels = response.labels;
+      final labelsNames = labels.map((e) => e.name).toList();
+      return labelsNames;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 
   @override
@@ -59,37 +63,165 @@ class _HomeViewState extends State<HomeView> {
                 return true;
               },
               builder: (context, state) {
-                if (state.status == TasksStatus.loading) {
-                  return const Expanded(
-                      child: Center(child: LinearProgressIndicator()));
-                } else if (state.status == TasksStatus.success) {
-                  if (state.tasks.isNotEmpty) {
-                    return Expanded(
-                      child: ListView.separated(
-                        itemCount: state.tasks.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 16.0),
-                        itemBuilder: (context, index) {
-                          final task = state.tasks[index];
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('ID: ${task.taskId}'),
-                              Text('Fecha: ${task.date}'),
-                              Text('Label IDs: ${task.labelIds.toString()}'),
-                              Text(task.description),
-                            ],
-                          );
-                        },
+                return FutureBuilder<List<String>>(
+                  future: getLabelsNames(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final labelsNames = snapshot.data!;
+                      if (state.status == TasksStatus.loading) {
+                        return const Expanded(
+                            child: Center(child: CircularProgressIndicator()));
+                      } else if (state.status == TasksStatus.success) {
+                        if (state.tasks.isNotEmpty) {
+                          return Expanded(
+                            child: ListView.separated(
+  itemCount: state.tasks.length,
+  separatorBuilder: (context, index) =>
+      const SizedBox(height: 16.0),
+  itemBuilder: (context, index) {
+    final task = state.tasks[index];
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 16.0,
+        right: 16.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFEAF5FC),
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          top: 16.0,
+          right: 16.0,
+          bottom: 16.0,
+        ),
+        child: CheckboxListTile(
+          value: task.isDone,
+          onChanged: (value) async {
+
+            await BlocProvider.of<TasksCubit>(context).updateTask(
+              task.taskId,
+              task.description,
+              task.date,
+              task.labelIds,
+              !task.isDone,
+              task.dateFinish,
+            );
+          },
+          title: Text(
+            task.description,
+            style: TextStyle(
+              color: task.isDone ? Colors.red : const Color(0xFF5E35B1),
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+              decoration: task.isDone ? TextDecoration.lineThrough : null,
+            ),
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+          activeColor: Colors.red,
+          checkColor: Colors.white,
+          secondary: IconButton(
+            icon: Icon(
+              Icons.edit,
+              color: Colors.purple,
+            ),
+            onPressed: () async {
+              print("editar tarea ${task.description}");
+              final updateTask = await showDialog(
+                context: context,
+                builder: (context) {
+                  final descriptionController = TextEditingController(
+                    text: task.description,
+                  );
+                  return AlertDialog(
+                    title: const Text('Editar tarea'),
+                    content: TextFormField(
+                      controller: descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Descripción',
                       ),
-                    );
-                  } else {
-                    return const Expanded(
-                        child: Center(child: Text('No hay tareas pendientes')));
-                  }
-                } else {
-                  return const SizedBox.shrink();
-                }
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pop(descriptionController.text);
+                        },
+                        child: const Text("Aceptar"),
+                      ),
+                    ],
+                  );
+                },
+              );
+              if (updateTask != null) {
+                await BlocProvider.of<TasksCubit>(context).updateTask(
+                  task.taskId,
+                  updateTask,
+                  task.date,
+                  task.labelIds,
+                  task.isDone,
+                  task.dateFinish,
+                );
+                print(task.date);
+              }
+            },
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Etiquetas: ${task.labelIds.map((labelId) => labelsNames[labelId - 1]).join(', ')}',
+                style: TextStyle(
+                  color: const Color(0xFF3949AB),
+                  fontSize: 14.0,
+                ),
+              ),
+              Text(
+                'Fecha límite: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(task.date))}',
+                style: TextStyle(
+                  color: const Color(0xFF7E57C2),
+                  fontSize: 14.0,
+                ),
+              ),
+              Text(
+                'fecha 2: ${task.dateFinish}',
+                style: TextStyle(
+                  color: const Color(0xFF7E57C2),
+                  fontSize: 14.0,
+                ),
+              ),
+              Text(
+                'isDone 2: ${task.isDone}',
+                style: TextStyle(
+                  color : const Color(0xFF7E57C2),
+              fontSize: 14.0,
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+},
+
+                            ),
+                          );  
+                        } else {
+                          return const Expanded(
+                              child: Center(
+                                  child: Text('No hay tareas pendientes')));
+                        }
+                      } else {
+                        BlocProvider.of<TasksCubit>(context).getTasks();
+                        return const SizedBox.shrink();
+                      }
+                    } else {
+                      return const Expanded(
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                  },
+                );
               },
             ),
           ],
@@ -97,19 +229,14 @@ class _HomeViewState extends State<HomeView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-            BlocProvider(
-                create: (context) => TaskCreateCubit(),
-                child: AddNoteView(),
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => BlocProvider(
+              create: (context) => TaskCreateCubit(),
+              child: AddNoteView(),
             ),
-          
           ));
-
-
-          // ignore: use_build_context_synchronously
           BlocProvider.of<TasksCubit>(context).getTasks();
 
-          ;
         },
         tooltip: 'Agregar nueva tarea',
         child: const Icon(Icons.add_rounded, size: 50),

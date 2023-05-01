@@ -65,7 +65,7 @@ class AddTagView extends StatelessWidget {
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
-          ),
+          ),                        
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

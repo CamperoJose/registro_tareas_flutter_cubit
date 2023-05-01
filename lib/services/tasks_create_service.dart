@@ -7,7 +7,7 @@ import 'endpoints.dart';
 
 class TaskCreateService {
   static Future<NewTaskResponse> createTask(
-      String description, String date, List<int> labelIds) async {
+      String description, String date, List<int> labelIds, bool isDone, String d2) async {
     final authToken = await FlutterKeychain.get(key: "AuthToken");
     print("llega aqui");
 
@@ -22,10 +22,11 @@ class TaskCreateService {
         "description": description,
         "date": date,
         "labelIds": labelIds,
+        "isDone": isDone,
+        "dateFinish": d2,
       }),
     );
 
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       return NewTaskResponse.fromJson(json.decode(response.body));
