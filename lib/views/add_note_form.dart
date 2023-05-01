@@ -46,7 +46,6 @@ class AddNoteForm extends StatelessWidget {
                       DateTime.parse("${_noteDate.text.replaceAll(" ", "T")}Z");
                   String fecha2 = date1.toIso8601String();
                   await BlocProvider.of<TaskCreateCubit>(context).createTask(noteName.text, fecha2, list, false, fecha2);
-                  Navigator.pop(context);
                 },
                 primaryColor: Colors.green.shade900,
               ),
